@@ -9,3 +9,8 @@ def some_handler():
         s.add(dialog)
         s.add(message)
 
+    print(message.text)
+
+
+if __name__ == '__main__':
+    some_handler()

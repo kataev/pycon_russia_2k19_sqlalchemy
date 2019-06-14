@@ -40,7 +40,7 @@ class BotMessage(Base):
     meta = sa.Column(sa.JSON, nullable=False, default={})
 
     client_message = so.relationship(
-        lambda: BotMessage, backref=so.backref("bot_messages")
+        lambda: ClientMessage, backref=so.backref("bot_messages")
     )
     dialog = so.relationship(
         Dialog, lazy="joined", backref=so.backref("bot_messages")
