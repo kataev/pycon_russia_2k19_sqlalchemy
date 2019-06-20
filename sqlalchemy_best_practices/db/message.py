@@ -5,45 +5,36 @@ from .base import Base
 from .dialog import Dialog
 
 
-class ClientMessage(Base):
-    __tablename__ = "client_message"
+class MessageQuery(so.Query):
+    def last_message(self, dialog):
+        max_id = self.session.query(
+            sa.func.max(Message.id)
+        ).filter(Message.dialog == dialog).as_scalar()
 
-    id = sa.Column(sa.Integer, primary_key=True)
-    dialog_id = sa.Column(
-        Dialog.id.type, sa.ForeignKey(Dialog.id), nullable=False
-    )
-    text = sa.Column(sa.Text, nullable=False)
-    meta = sa.Column(sa.JSON, nullable=False, default={})
-
-    dialog = so.relationship(
-        Dialog, lazy="joined", backref=so.backref("client_messages")
-    )
-
-    def __init__(self, dialog, text):
-        self.dialog = dialog
-        self.text = text
+        return self.filter(Message.id == max_id).one()
 
 
-class BotMessage(Base):
-    __tablename__ = "bot_message"
+class Message(Base):
+    __tablename__ = "message"
+    __query_cls__ = MessageQuery
 
-    id = sa.Column(sa.Integer, primary_key=True)
+    id = sa.Column('message_id', sa.Integer, primary_key=True)
     dialog_id = sa.Column(
         Dialog.id.type, sa.ForeignKey(Dialog.id), nullable=False
     )
     client_message_id = sa.Column(
-        ClientMessage.id.type,
-        sa.ForeignKey(ClientMessage.id),
-        nullable=False,
+        sa.Integer, sa.ForeignKey(id), nullable=True,
     )
     text = sa.Column(sa.Text, nullable=False)
     meta = sa.Column(sa.JSON, nullable=False, default={})
 
     client_message = so.relationship(
-        lambda: ClientMessage, backref=so.backref("bot_messages")
+        lambda: Message, backref=so.backref("bot_messages"),
+        remote_side=[id],
+
     )
     dialog = so.relationship(
-        Dialog, lazy="joined", backref=so.backref("bot_messages")
+        Dialog, lazy="joined", backref=so.backref("client_messages")
     )
 
     def __init__(self, dialog, text):

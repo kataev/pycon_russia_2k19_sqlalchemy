@@ -1,9 +1,9 @@
-from .db import session, Dialog, ClientMessage
+from .db import session, Dialog, Message
 
 
 def some_handler():
     dialog = Dialog('some_user_id')
-    message = ClientMessage(dialog, 'Привет Олег')
+    message = Message(dialog, 'Привет Олег')
 
     with session() as s:
         s.add(dialog)

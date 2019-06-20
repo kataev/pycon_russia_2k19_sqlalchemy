@@ -1,3 +1,3 @@
-from .base import session
+from .base import session, current_session
 from .dialog import Dialog
-from .message import ClientMessage, BotMessage
+from .message import Message, MessagePerDialog
