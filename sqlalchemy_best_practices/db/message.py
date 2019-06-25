@@ -34,7 +34,8 @@ class Message(Base):
 
     )
     dialog = so.relationship(
-        Dialog, lazy="joined", backref=so.backref("client_messages")
+        Dialog, lazy="joined",
+        backref=so.backref("messages", query_class=MessageQuery)
     )
 
     def __init__(self, dialog, text):
